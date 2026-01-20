@@ -10,7 +10,6 @@ Timeframe: 2022-04-01 12 to 2022-04-01 15
 Execution Time: 175257.51 ms
 Most Placed Color: #000000
 Most Placed Pixel Location: 0,0
-sylviadu@MacBook-Air-784 CS 369 % 
 
 ## 6-Hour Timeframe
 Timeframe: 2022-04-01 12 to 2022-04-01 18
