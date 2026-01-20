@@ -3,6 +3,7 @@ import time
 import duckdb
 from datetime import datetime
 
+# helper function
 def parse_hour(time_str):
     try:
         return datetime.strptime(time_str, "%Y-%m-%d %H")
@@ -11,21 +12,26 @@ def parse_hour(time_str):
         sys.exit(1)
 
 def main():
+    # check for if there's the correct number of inputs
     if len(sys.argv) != 4:
         print("Error: missing arguments.")
         print("Example: python Week2_DuckDB.py 2022_place.parquet '2022-04-01 12' '2022-04-01 13'")
         sys.exit(1)
 
+    # read arguments
     parquet_file = sys.argv[1]
     start_hour = parse_hour(sys.argv[2])
     end_hour = parse_hour(sys.argv[3])
 
+    # check if end hour comes after start hour
     if end_hour <= start_hour:
         print("Error: End hour must be after start hour.")
         sys.exit(1)
 
+    # starting time
     start_time = time.perf_counter_ns()
 
+    # connect to DuckDB
     con = duckdb.connect()
 
     # rows processed (entire file)
@@ -57,6 +63,7 @@ def main():
         """
     ).fetchone()[0]
 
+    # stop timing
     end_time = time.perf_counter_ns()
     time_ms = (end_time - start_time) / 1_000_000
 

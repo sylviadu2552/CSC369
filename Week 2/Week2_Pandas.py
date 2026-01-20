@@ -37,7 +37,7 @@ def main():
     # starting time
     start_time = time.perf_counter_ns()
 
-    # reads file
+    # reads CSV file in chunks
     try:
         reader = pd.read_csv(
             csv_file,
@@ -45,7 +45,7 @@ def main():
             usecols=["timestamp", "pixel_color", "coordinate"]
         )
 
-
+        # process each chunk
         for chunk in reader:
             total_rows += len(chunk)
 
@@ -72,17 +72,21 @@ def main():
             for coord, count in chunk["coordinate"].value_counts().items():
                 pixel_counts[coord] = pixel_counts.get(coord, 0) + count
 
+    # handles missing fille error
     except FileNotFoundError:
         print(f"Error: file '{csv_file}' not found.")
         sys.exit(1)
 
+    # exit if no pixels found in timeframe
     if not color_counts or not pixel_counts:
         print("No pixels found in this timeframe.")
         sys.exit(1)
 
+    # finds the most placed colors and pixel
     most_color = max(color_counts, key=color_counts.get)
     most_pixel = max(pixel_counts, key=pixel_counts.get)
 
+    # stop timing
     end_time = time.perf_counter_ns()
     time_ms = (end_time - start_time) / 1_000_000
 
