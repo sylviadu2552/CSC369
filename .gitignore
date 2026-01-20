@@ -1,0 +1,5 @@
+*.csv
+*.parquet
+Week 1/
+csv_to_parquet.py
+
