@@ -39,12 +39,12 @@ def main():
         f"SELECT COUNT(*) FROM read_parquet('{parquet_file}')"
     ).fetchone()[0]
 
-    # most placed color
+    # most placed color ({} is interpolation)
     most_color = con.execute(
         f"""
         SELECT pixel_color
         FROM read_parquet('{parquet_file}')
-        WHERE timestamp >= '{start_hour}' AND timestamp < '{end_hour}'
+        WHERE timestamp >= '{start_hour}' AND timestamp < '{end_hour}' 
         GROUP BY pixel_color
         ORDER BY COUNT(*) DESC
         LIMIT 1
