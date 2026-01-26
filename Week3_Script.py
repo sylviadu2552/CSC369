@@ -1,21 +1,22 @@
 import sys
 import time
 import duckdb
-from datetime import datetime
+from datetime import datetime, timezone
 
 # helper function
 def parse_hour(time_str):
     try:
-        return datetime.strptime(time_str, "%Y-%m-%d %H")
+        # forces UTC timezone
+        return datetime.strptime(time_str, "%Y-%m-%d %H").replace(tzinfo=timezone.utc)
     except ValueError:
         print("Error: Inputted time is not in proper format. Format must be YYYY-MM-DD HH")
         sys.exit(1)
 
 def main():
-     # check for if there's the correct number of inputs
+    # check for if there's correct number of input
     if len(sys.argv) != 5:
         print("Error: missing arguments.")
-        print("Example: python Week3_Script.py data.parquet user_first_pixel.parquet 'YYYY-MM-DD HH' 'YYYY-MM-DD HH'")
+        print("Example: python Week3_Script.py week3_preprocessed.parquet user_first.parquet 'YYYY-MM-DD HH' 'YYYY-MM-DD HH'")
         sys.exit(1)
 
     # read arguments
@@ -29,17 +30,22 @@ def main():
         print("Error: End hour must be after start hour.")
         sys.exit(1)
 
-    # connects duckdb
+    # converts start and end times into seconds
+    start_ts = int(start_hour.timestamp())
+    end_ts = int(end_hour.timestamp())
+
+    # connects to duckdb
     con = duckdb.connect()
+    con.execute("PRAGMA timezone='UTC';")  
 
     # 1.) Ranking of colors by distinct users
     start_time_colors = time.perf_counter_ns()
 
     colors_by_users = con.execute(f"""
-        SELECT pixel_color, COUNT(DISTINCT user_id) AS distinct_users
+        SELECT color_group AS color, COUNT(DISTINCT user_key) AS distinct_users
         FROM read_parquet('{data_file}')
-        WHERE timestamp >= '{start_hour}' AND timestamp < '{end_hour}'
-        GROUP BY pixel_color
+        WHERE ts_s >= {start_ts} AND ts_s < {end_ts}
+        GROUP BY color_group
         ORDER BY distinct_users DESC
     """).fetchdf()
 
@@ -50,26 +56,26 @@ def main():
 
     avg_session = con.execute(f"""
         WITH ordered AS (
-            SELECT user_id, timestamp,
-                LAG(timestamp) OVER (PARTITION BY user_id ORDER BY timestamp) AS prev_time
+            SELECT user_key, ts_s,
+                LAG(ts_s) OVER (PARTITION BY user_key ORDER BY ts_s) AS prev_time
             FROM read_parquet('{data_file}')
-            WHERE timestamp >= '{start_hour}' AND timestamp < '{end_hour}'
+            WHERE ts_s >= {start_ts} AND ts_s < {end_ts}
         ),
         sessions AS (
-            SELECT user_id, timestamp,
-                SUM(CASE WHEN prev_time IS NULL OR EXTRACT(EPOCH FROM timestamp - prev_time) > 900
+            SELECT user_key, ts_s,
+                SUM(CASE WHEN prev_time IS NULL OR ts_s - prev_time > 900
                          THEN 1 ELSE 0 END)
-                    OVER (PARTITION BY user_id ORDER BY timestamp) AS session_id
+                    OVER (PARTITION BY user_key ORDER BY ts_s) AS session_id
             FROM ordered
         ),
         session_lengths AS (
-            SELECT user_id, session_id,
-                (MAX(timestamp) - MIN(timestamp)) AS length_interval
+            SELECT user_key, session_id,
+                MAX(ts_s) - MIN(ts_s) AS length_seconds
             FROM sessions
-            GROUP BY user_id, session_id
+            GROUP BY user_key, session_id
             HAVING COUNT(*) > 1
         )
-        SELECT AVG(EXTRACT(EPOCH FROM length_interval)) AS avg_session_seconds
+        SELECT AVG(length_seconds) AS avg_session_seconds
         FROM session_lengths
     """).fetchone()[0]
 
@@ -85,10 +91,10 @@ def main():
             percentile_cont(0.90) WITHIN GROUP (ORDER BY count_pixels) AS p90,
             percentile_cont(0.99) WITHIN GROUP (ORDER BY count_pixels) AS p99
         FROM (
-            SELECT user_id, COUNT(*) AS count_pixels
+            SELECT user_key, SUM(weight) AS count_pixels
             FROM read_parquet('{data_file}')
-            WHERE timestamp >= '{start_hour}' AND timestamp < '{end_hour}'
-            GROUP BY user_id
+            WHERE ts_s >= {start_ts} AND ts_s < {end_ts}
+            GROUP BY user_key
         )
     """).fetchdf()
 
@@ -100,13 +106,12 @@ def main():
     first_users = con.execute(f"""
         SELECT COUNT(*) AS first_time_users
         FROM read_parquet('{first_pixel_file}')
-        WHERE first_pixel_time >= '{start_hour}' AND first_pixel_time < '{end_hour}'
+        WHERE first_ts_s >= {start_ts} AND first_ts_s < {end_ts}
     """).fetchone()[0]
 
     end_time_first_users = time.perf_counter_ns()
 
-
-    ### Ouputs Results
+    # outputs results
     print(f"Timeframe: {start_hour} to {end_hour}\n")
 
     print("1.) Colors ranked by distinct users:")
@@ -130,7 +135,6 @@ def main():
     print("- Sessions:", (end_time_sessions - start_time_sessions) / 1_000_000, "ms")
     print("- Percentiles:", (end_time_percentiles - start_time_percentiles) / 1_000_000, "ms")
     print("- First Users:", (end_time_first_users - start_time_first_users) / 1_000_000, "ms")
-
 
 if __name__ == "__main__":
     main()
