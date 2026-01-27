@@ -1,6 +1,5 @@
 # Week 3 Results
-## Size of pre-processed results
-1.38 GB + 113.9MB(for the users first pixel parquet)
+**Size of pre-processed results:** 1.38 GB + 113.9MB(for the users first pixel parquet)
 
 **Timeframe:** 2022-04-01 12 to 2022-04-01 18
 
