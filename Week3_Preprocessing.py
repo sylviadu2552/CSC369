@@ -7,15 +7,15 @@ if len(sys.argv) != 3:
     sys.exit(1)
 
 # read arguments
-PARQUET_PATH = sys.argv[1]
-OUT_PREFIX = sys.argv[2]
+input_file = sys.argv[1]
+output_file = sys.argv[2]
 
 # set outfile names
-PREPROCESSED_PATH = f"{OUT_PREFIX}.parquet"
-USER_FIRST_PATH = "user_first.parquet"
+processed_file = f"{output_file}.parquet"
+first_time_file = "user_first.parquet"
 
 # map hex codes to english names
-HEX_TO_GROUP = {
+color_lookup = {
     "#6D001A": "dark red",
     "#BE0039": "bright red",
     "#FF4500": "red orange",
@@ -52,7 +52,7 @@ HEX_TO_GROUP = {
 
 # create SQL for color mapping table
 group_values_sql = "SELECT * FROM (VALUES\n" + ",\n".join(
-    [f"('{h}', '{g}')" for h, g in HEX_TO_GROUP.items()]
+    [f"('{h}', '{g}')" for h, g in color_lookup.items()]
 ) + "\n) AS t(hex, color_group)"
 
 # connect/set up duckdb
@@ -68,7 +68,7 @@ WITH raw AS (
     user_id,
     UPPER(pixel_color) AS hex,
     REPLACE(REPLACE(coordinate, '"', ''), ' ', '') AS coord
-  FROM read_parquet('{PARQUET_PATH}')
+  FROM read_parquet('{input_file}')
 ),
 mapped AS (
   SELECT
@@ -97,7 +97,7 @@ FROM mapped
 # export to preprocessed parquet
 con.execute(f"""
 COPY ({preprocess_sql})
-TO '{PREPROCESSED_PATH}'
+TO '{processed_file}'
 (FORMAT PARQUET, COMPRESSION ZSTD, OVERWRITE);
 """)
 
@@ -105,15 +105,15 @@ TO '{PREPROCESSED_PATH}'
 con.execute(f"""
 COPY (
   SELECT user_key, MIN(ts_s) AS first_ts_s
-  FROM read_parquet('{PREPROCESSED_PATH}')
+  FROM read_parquet('{processed_file}')
   GROUP BY user_key
 )
-TO '{USER_FIRST_PATH}'
+TO '{first_time_file}'
 (FORMAT PARQUET, COMPRESSION ZSTD, OVERWRITE);
 """)
 
 con.close()
 
 print("Pre-processing complete")
-print("Preprocessed file:", PREPROCESSED_PATH)
-print("User-first file:", USER_FIRST_PATH)
+print("Preprocessed file:", processed_file)
+print("User-first file:", first_time_file)
