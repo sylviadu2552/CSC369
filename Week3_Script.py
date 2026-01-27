@@ -13,7 +13,7 @@ def parse_hour(time_str):
         sys.exit(1)
 
 def main():
-    # check for if there's correct number of input
+    # check for if there's correct number of inputs
     if len(sys.argv) != 5:
         print("Error: missing arguments.")
         print("Example: python Week3_Script.py week3_preprocessed.parquet user_first.parquet 'YYYY-MM-DD HH' 'YYYY-MM-DD HH'")
@@ -112,29 +112,40 @@ def main():
     end_time_first_users = time.perf_counter_ns()
 
     # outputs results
-    print(f"Timeframe: {start_hour} to {end_hour}\n")
-
-    print("1.) Colors ranked by distinct users:")
-    print(colors_by_users.head(10))
+    print("### Ranking of Colors by Distinct Users")
+    print("- **Top Colors:**")
+    for i, row in colors_by_users.head(10).iterrows():
+        print(f"  {i+1}. {row['color'].capitalize()}: {row['distinct_users']:,} users")
     print()
 
-    print("2.) Average session length:")
-    print(avg_session, "seconds")
+    print("### Average Session Length")
+    print(f"- **Output:** {avg_session:.1f} seconds")
     print()
 
-    print("3.) Pixel placement percentiles:")
-    print(percentiles)
+    print("### Percentiles of Pixels Placed")
+    print("- **Output:**")
+    print(f"  - 50th Percentile: {percentiles['p50'].iloc[0]:.0f} pixels")
+    print(f"  - 75th Percentile: {percentiles['p75'].iloc[0]:.0f} pixels")
+    print(f"  - 90th Percentile: {percentiles['p90'].iloc[0]:.0f} pixels")
+    print(f"  - 99th Percentile: {percentiles['p99'].iloc[0]:.0f} pixels")
     print()
 
-    print("4.) Number of first-time users:")
-    print(first_users)
+    print("### Count of First-Time Users")
+    print(f"- **Output:** {first_users:,} users")
     print()
 
-    print("Execution time:")
-    print("- Colors:", (end_time_colors - start_time_colors) / 1_000_000, "ms")
-    print("- Sessions:", (end_time_sessions - start_time_sessions) / 1_000_000, "ms")
-    print("- Percentiles:", (end_time_percentiles - start_time_percentiles) / 1_000_000, "ms")
-    print("- First Users:", (end_time_first_users - start_time_first_users) / 1_000_000, "ms")
+    print("### Runtime")
+    colors_time = (end_time_colors - start_time_colors) / 1_000_000
+    sessions_time = (end_time_sessions - start_time_sessions) / 1_000_000
+    percentiles_time = (end_time_percentiles - start_time_percentiles) / 1_000_000
+    first_time = (end_time_first_users - start_time_first_users) / 1_000_000
+    total_time = colors_time + sessions_time + percentiles_time + first_time
+
+    print(f"- Colors: {colors_time:.1f} ms")
+    print(f"- Sessions: {sessions_time:.1f} ms")
+    print(f"- Percentiles: {percentiles_time:.1f} ms")
+    print(f"- First Users: {first_time:.1f} ms")
+    print(f"- **Total:** {total_time:.1f} ms")
 
 if __name__ == "__main__":
-    main()
+     main()
