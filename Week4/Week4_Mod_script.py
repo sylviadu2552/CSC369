@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 summary_csv = "whiteout_summary.csv"
 output_gif = "moderator_whiteout.gif"
 frame_skip = 5   # use every 5th row to reduce memory and speed up animation
-fps = 10         # frames per second for GIF
+fps = 20         # frames per second for GIF
 
 whiteout_df = pd.read_csv(summary_csv)
 
