@@ -1,0 +1,135 @@
+[
+  {
+    "objectID": "Week 1/test_results_week1.html",
+    "href": "Week 1/test_results_week1.html",
+    "title": "Week 1 Results",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 397645.29 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29 ## 3-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 382714.73 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0 ## 6-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 453334.33 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "Week 1/test_results_week1.html#hour-timeframe",
+    "href": "Week 1/test_results_week1.html#hour-timeframe",
+    "title": "Week 1 Results",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 397645.29 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29 ## 3-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 382714.73 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0 ## 6-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 453334.33 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "Week 2/Week2_duckdb_test_results.html",
+    "href": "Week 2/Week2_duckdb_test_results.html",
+    "title": "Week 1 Results",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 79.87 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29 ## 3-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 140.36 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0 ## 6-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 258.89 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "Week 2/Week2_duckdb_test_results.html#hour-timeframe",
+    "href": "Week 2/Week2_duckdb_test_results.html#hour-timeframe",
+    "title": "Week 1 Results",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 79.87 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29 ## 3-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 140.36 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0 ## 6-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 258.89 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "Week 2/Week2_comparison.html",
+    "href": "Week 2/Week2_comparison.html",
+    "title": "Week 2: Comparison of Implementation Strategies",
+    "section": "",
+    "text": "Pandas was rather pretty easy to write I suppose since I’m the most familiar with Pandas and there’s already built in functions, but i was still slower than DuckDB and Polars for large datasets like this one. As my memory couldn’t hold, I had to chunk the data which adds extra complexity since each chunk has to be processed separately. You also have to manually merge the results across chunks. This one also ran the slowest for all three time frames by quite a comparable amount of time. ## Polars (Streaming + Parquet) Polars was the fastest for the one hour time frame and through using the streaming method, it enabled optimizations by reading only the needed columns and parallelizing tasks, preventing memory crashes. Polars also provided by streaming and eager method, contrary to Pandas which only follows the eager method. However, Pandas was slightly slower than DuckDB when the filtered time window is larger. Also, the API seems to change frequently between versions, making it the hardest to write. ## DuckDB (SQL + Parquet) DuckDB was faster for the three and six hour time frame, and SQL made filtering and aggregation simple. It was also fast and memory-efficient and there’s automatic query optimization. A con to DuckDB would probably be you have to know SQL syntax and it’s less “Python” than Pandas or Polars.\n\n\n\nMy favorite approach was DuckDB. It was consistently fast across all time windows and handled the larger timestamp ranges more efficiently than the other tools. Additionally, I’m already familiar with SQL from last quarter, so DuckDB felt the most natural and easy to write."
+  },
+  {
+    "objectID": "Week 2/Week2_comparison.html#pandas",
+    "href": "Week 2/Week2_comparison.html#pandas",
+    "title": "Week 2: Comparison of Implementation Strategies",
+    "section": "",
+    "text": "Pandas was rather pretty easy to write I suppose since I’m the most familiar with Pandas and there’s already built in functions, but i was still slower than DuckDB and Polars for large datasets like this one. As my memory couldn’t hold, I had to chunk the data which adds extra complexity since each chunk has to be processed separately. You also have to manually merge the results across chunks. This one also ran the slowest for all three time frames by quite a comparable amount of time. ## Polars (Streaming + Parquet) Polars was the fastest for the one hour time frame and through using the streaming method, it enabled optimizations by reading only the needed columns and parallelizing tasks, preventing memory crashes. Polars also provided by streaming and eager method, contrary to Pandas which only follows the eager method. However, Pandas was slightly slower than DuckDB when the filtered time window is larger. Also, the API seems to change frequently between versions, making it the hardest to write. ## DuckDB (SQL + Parquet) DuckDB was faster for the three and six hour time frame, and SQL made filtering and aggregation simple. It was also fast and memory-efficient and there’s automatic query optimization. A con to DuckDB would probably be you have to know SQL syntax and it’s less “Python” than Pandas or Polars."
+  },
+  {
+    "objectID": "Week 2/Week2_comparison.html#favorite-approach",
+    "href": "Week 2/Week2_comparison.html#favorite-approach",
+    "title": "Week 2: Comparison of Implementation Strategies",
+    "section": "",
+    "text": "My favorite approach was DuckDB. It was consistently fast across all time windows and handled the larger timestamp ranges more efficiently than the other tools. Additionally, I’m already familiar with SQL from last quarter, so DuckDB felt the most natural and easy to write."
+  },
+  {
+    "objectID": "Week 3/test_results_week_3.html",
+    "href": "Week 3/test_results_week_3.html",
+    "title": "Week 3 Results",
+    "section": "",
+    "text": "Week 3 Results\nSize of pre-processed results: 1.38 GB + 113.9MB(for the users first pixel parquet)\nTimeframe: 2022-04-01 12 to 2022-04-01 18\n\nRanking of Colors by Distinct Users\n\nTop Colors:\n\nBlack: 412,119 users\nRed orange: 298,993 users\nWhite: 270,206 users\nBlue: 244,147 users\nYellow: 201,022 users\nCyan: 117,113 users\nLight pink: 116,716 users\nLight green: 102,039 users\nDark green: 95,609 users\nPurple: 77,677 users\n\n\n\n\nAverage Session Length\n\nOutput: 1640.4 seconds\n\n\n\nPercentiles of Pixels Placed\n\nOutput:\n\n50th Percentile: 2 pixels\n75th Percentile: 4 pixels\n90th Percentile: 11 pixels\n99th Percentile: 33 pixels\n\n\n\n\nCount of First-Time Users\n\nOutput: 1,062,689 users\n\n\n\nRuntime\n\nColors: 993.8 ms\nSessions: 515.3 ms\nPercentiles: 265.9 ms\nFirst Users: 36.1 ms\nTotal: 1811.0 ms"
+  },
+  {
+    "objectID": "Week 2/Week2_panda_test_results.html",
+    "href": "Week 2/Week2_panda_test_results.html",
+    "title": "Week 2 Results: Pandas",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 172595.42 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29\n\n\n\nTimeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 175257.51 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0\n\n\n\nTimeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 179802.11 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "Week 2/Week2_panda_test_results.html#hour-timeframe",
+    "href": "Week 2/Week2_panda_test_results.html#hour-timeframe",
+    "title": "Week 2 Results: Pandas",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 172595.42 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29"
+  },
+  {
+    "objectID": "Week 2/Week2_panda_test_results.html#hour-timeframe-1",
+    "href": "Week 2/Week2_panda_test_results.html#hour-timeframe-1",
+    "title": "Week 2 Results: Pandas",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 175257.51 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0"
+  },
+  {
+    "objectID": "Week 2/Week2_panda_test_results.html#hour-timeframe-2",
+    "href": "Week 2/Week2_panda_test_results.html#hour-timeframe-2",
+    "title": "Week 2 Results: Pandas",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 179802.11 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "Week 2/Week2_polars_test_results.html",
+    "href": "Week 2/Week2_polars_test_results.html",
+    "title": "Week 2 Results: Polars",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 43.64 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29 ## 3-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 250.12 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0 ## 6-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 500.69 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "Week 2/Week2_polars_test_results.html#hour-timeframe",
+    "href": "Week 2/Week2_polars_test_results.html#hour-timeframe",
+    "title": "Week 2 Results: Polars",
+    "section": "",
+    "text": "Timeframe: 2022-04-01 12 to 2022-04-01 13 Execution Time: 43.64 ms Most Placed Color: #FFFFFF Most Placed Pixel Location: 5,29 ## 3-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 15 Execution Time: 250.12 ms Most Placed Color: #000000 Most Placed Pixel Location: 0,0 ## 6-Hour Timeframe Timeframe: 2022-04-01 12 to 2022-04-01 18 Execution Time: 500.69 ms Most Placed Color: #000000 Most Placed Pixel Location: 859,766"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "CS 369",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "Week4/Week4_lab.html",
+    "href": "Week4/Week4_lab.html",
+    "title": "Week 4 Lab",
+    "section": "",
+    "text": "Bot-Suspected Activity refers to pixels placed at rates far beyond normal human capability, indicating automated or coordinated actions. These pixels rapidly fill areas, overwrite other users, and appear in dense bursts, often targeting high-visibility regions of the r/place canvas. Normal human activity is slower, more sporadic, and rarely overwrites the same pixel repeatedly within seconds.\nDown below identifies types of bot behavior, starting with scheduled pixel placements.\n\n\n\n\nScheduled bots place pixels with pretty accurate regular timing, often hitting the cooldown limit almost perfectly. This results in near-zero variance in the interval between pixel placements for a given user.\nScript: Full script on Github: Week4ScheduledScript.py onGitHub\nThis script analyzes r/place pixel placements to detect unusual activity. It looks at how quickly users place pixels and the consistency of their timing. Users who place pixels very rapidly with low variation in timing are flagged as potentially automated or part of a coordinated effort. The script processes the data in manageable chunks, calculates time intervals between each placement for every user, and aggregates statistics like the mean and standard deviation of these intervals. In the end, it produces a set of CSVs showing user-level stats and a list of suspected bots, which can be used for further analysis or visualization of irregular activity as done below.\n\n\n\n\nknitr::include_graphics(\"scheduled_bots_zoom_histogram.png\")\n\n\n\n\n\n\n\n\nTo highlight highly regular activity, we can zoom in on the low-standard-deviation region (≤ 5 seconds), which corresponds to the most likely scheduled bots. (Users with SD’s of 0 was rescaled to 0.1 to show on the graph as the log of 0 is undefined.\n\nknitr::include_graphics(\"scheduled_bots_log_histogram.png\")\n\n\n\n\n\n\n\n\nFrom the histogram, we can see that a small subset of users repeatedly place pixels with extremely low variance, which would be consistent with automated scripts. Below is a gif of suspected scheduled bots with their respective location and time on r/place.\n\nknitr::include_graphics(\"scheduled_bots.gif\")\n\n\n\n\n\n\n\n\nThis may seem like a lot of suspected bots, but when compared to the amount of humans (users not suspected to be bots), the number is relatively small.\n\nknitr::include_graphics(\"scheduled_bots_vs_humans.gif\")\n\n\n\n\n\n\n\n\n\n\n\nOne noticeable cluster of scheduled bot activity appeared around the center of the canvas shortly after the first canvas expansion. These bots rapidly filled areas near the Trans Pride flag and the American flag. Another noticeable cluster is around the corners of the first canvas, which also had notable artworks like the “connection lost” artwork and the “r/borderland” logo.\n\n\n\n\nA second type of bot behavior would occur when users repeatedly place pixels faster than allowed by the cool down (5 minutes).These accounts may appear human at first glance, but bursts of rapid pixel placement violate the platform rules.\nScript: Full script on Github: Week4ScriptCooldown.py onGitHub\nThis script identifies suspected bot activity on r/place by checking whether users place pixels faster than the allowed cooldown times. It first determines the full time range of the dataset, then processes the data in manageable chunks to reduce memory usage. For each user, it calculates the time difference between consecutive pixel placements. If a placement happens faster than the cooldown rules allow, it is flagged as a suspected bot. All flagged placements across chunks are collected and saved to a CSV, which can be used for visualization or further analysis. This approach allows us to efficiently detect automated or coordinated activity while keeping the process reproducible.\nVisualization of Suspected Bots:\nBelow is a gif of suspected cooldown breaking bots with their respective location and time on r/place.\n- Pixels flagged in yellow represent rapid overwrites, while red represents fast pixel placements.\n\nknitr::include_graphics(\"bot_suspected_activity.gif\")\n\n\n\n\n\n\n\n\n\n\nSimilar to the scheduled bot clusters, one noticeable cluster of scheduled bot activity appeared around the center of the canvas near the Trans Pride flag and the American flag. Another noticeable cluster is near the bottom left of the fully expanded canvas, where the large France flag was located."
+  },
+  {
+    "objectID": "Week4/Week4_lab.html#bot-suspected-activity",
+    "href": "Week4/Week4_lab.html#bot-suspected-activity",
+    "title": "Week 4 Lab",
+    "section": "",
+    "text": "Bot-Suspected Activity refers to pixels placed at rates far beyond normal human capability, indicating automated or coordinated actions. These pixels rapidly fill areas, overwrite other users, and appear in dense bursts, often targeting high-visibility regions of the r/place canvas. Normal human activity is slower, more sporadic, and rarely overwrites the same pixel repeatedly within seconds.\nDown below identifies types of bot behavior, starting with scheduled pixel placements.\n\n\n\n\nScheduled bots place pixels with pretty accurate regular timing, often hitting the cooldown limit almost perfectly. This results in near-zero variance in the interval between pixel placements for a given user.\nScript: Full script on Github: Week4ScheduledScript.py onGitHub\nThis script analyzes r/place pixel placements to detect unusual activity. It looks at how quickly users place pixels and the consistency of their timing. Users who place pixels very rapidly with low variation in timing are flagged as potentially automated or part of a coordinated effort. The script processes the data in manageable chunks, calculates time intervals between each placement for every user, and aggregates statistics like the mean and standard deviation of these intervals. In the end, it produces a set of CSVs showing user-level stats and a list of suspected bots, which can be used for further analysis or visualization of irregular activity as done below.\n\n\n\n\nknitr::include_graphics(\"scheduled_bots_zoom_histogram.png\")\n\n\n\n\n\n\n\n\nTo highlight highly regular activity, we can zoom in on the low-standard-deviation region (≤ 5 seconds), which corresponds to the most likely scheduled bots. (Users with SD’s of 0 was rescaled to 0.1 to show on the graph as the log of 0 is undefined.\n\nknitr::include_graphics(\"scheduled_bots_log_histogram.png\")\n\n\n\n\n\n\n\n\nFrom the histogram, we can see that a small subset of users repeatedly place pixels with extremely low variance, which would be consistent with automated scripts. Below is a gif of suspected scheduled bots with their respective location and time on r/place.\n\nknitr::include_graphics(\"scheduled_bots.gif\")\n\n\n\n\n\n\n\n\nThis may seem like a lot of suspected bots, but when compared to the amount of humans (users not suspected to be bots), the number is relatively small.\n\nknitr::include_graphics(\"scheduled_bots_vs_humans.gif\")\n\n\n\n\n\n\n\n\n\n\n\nOne noticeable cluster of scheduled bot activity appeared around the center of the canvas shortly after the first canvas expansion. These bots rapidly filled areas near the Trans Pride flag and the American flag. Another noticeable cluster is around the corners of the first canvas, which also had notable artworks like the “connection lost” artwork and the “r/borderland” logo."
+  },
+  {
+    "objectID": "Week4/Week4_lab.html#cooldown-breaking-bots-visuals-made-in-r",
+    "href": "Week4/Week4_lab.html#cooldown-breaking-bots-visuals-made-in-r",
+    "title": "Week 4 Lab",
+    "section": "",
+    "text": "A second type of bot behavior would occur when users repeatedly place pixels faster than allowed by the cool down (5 minutes).These accounts may appear human at first glance, but bursts of rapid pixel placement violate the platform rules.\nScript: Full script on Github: Week4ScriptCooldown.py onGitHub\nThis script identifies suspected bot activity on r/place by checking whether users place pixels faster than the allowed cooldown times. It first determines the full time range of the dataset, then processes the data in manageable chunks to reduce memory usage. For each user, it calculates the time difference between consecutive pixel placements. If a placement happens faster than the cooldown rules allow, it is flagged as a suspected bot. All flagged placements across chunks are collected and saved to a CSV, which can be used for visualization or further analysis. This approach allows us to efficiently detect automated or coordinated activity while keeping the process reproducible.\nVisualization of Suspected Bots:\nBelow is a gif of suspected cooldown breaking bots with their respective location and time on r/place.\n- Pixels flagged in yellow represent rapid overwrites, while red represents fast pixel placements.\n\nknitr::include_graphics(\"bot_suspected_activity.gif\")\n\n\n\n\n\n\n\n\n\n\nSimilar to the scheduled bot clusters, one noticeable cluster of scheduled bot activity appeared around the center of the canvas near the Trans Pride flag and the American flag. Another noticeable cluster is near the bottom left of the fully expanded canvas, where the large France flag was located."
+  }
+]
