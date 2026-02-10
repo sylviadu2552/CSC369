@@ -1,0 +1,154 @@
+---
+title: "Week5_Lab"
+editor: visual
+---
+
+## Analysis of r/place Dataset – Predicting the Next 24 Hours
+
+For this assignment, I attempted multiple approaches to analyze and simulate the evolution of the r/place canvas, with the goal of predicting how it might have looked if it continued for another 24 hours before the whiteout. Each approach focused on different aspects of pixel dynamics, but none produced fully successful or reliable predictions.
+
+### **Script 1: Pixel-Level Probabilistic Simulation**
+
+#### 
+
+**Summary:**
+
+-   Computed:
+
+    -   **Pixel probabilities** based on historical frequency of colors at each pixel.
+
+    -   **Pixel change rates** to estimate the likelihood a pixel would change in a time interval.
+
+-   Built an initial canvas using the **most probable color per pixel**.
+
+-   Simulated canvas evolution using:
+
+    -   **Inertia:** tendency to keep current color.
+
+    -   **Neighbor influence:** neighbors slightly sway a pixel toward their color.
+
+    -   **Poisson-based change events** to probabilistically determine if a pixel would update.
+
+**Problems / Why it didn’t fully work:**
+
+-   The simulation over-smoothed the canvas, producing unrealistic uniformity in some regions.
+
+-   Neighbor influence was too local and weak, missing larger territorial dynamics.
+
+-   Whiteout handling amplified changes artificially, but the simulation still lacked coherent patterns.
+
+-   No concept of pixel "stability" or structured regions, so territorial dynamics were not captured well.
+
+**Script**: Full script on Github: [W](https://github.com/username/CS369/blob/main/Week4Script.py)[Script 1](https://github.com/sylviadu2552/CSC369/blob/master/Week5/Week5_Analysis_Pixel.py)
+
+Gif:
+
+```{r}
+knitr::include_graphics("prediction.gif")
+```
+
+### **Script 2: Territorial Dynamics Simulation**
+
+**Summary:**
+
+-   Focused on **territorial control** by computing **borders** (pixels whose neighbors have different colors).
+
+-   Added a **stability metric** for each pixel:
+
+    -   Interior pixels gained stability and resisted changes.
+
+    -   Border pixels were subject to neighbor color pressures.
+
+-   Simulation loop used:
+
+    -   **Inertia** and **stability** to resist changes.
+
+    -   **Neighbor invasion pressure** to allow color changes.
+
+**Problems / Why it didn’t fully work:**
+
+-   Computation was extremely slow due to checking borders pixel by pixel on a 2000×2000 canvas.
+
+-   Simulation failed to produce realistic large-scale territorial shifts, likely because neighbor influence and stability dynamics were not strong enough to replicate community interactions.
+
+-   Some regions became artificially “locked,” producing a static appearance rather than dynamic evolution.
+
+**Script**: Full script on Github: [W](https://github.com/username/CS369/blob/main/Week4Script.py)[Script 2](https://github.com/sylviadu2552/CSC369/blob/master/Week5/Week5_Analysis_Terratorial.py)
+
+```{r}
+knitr::include_graphics("territorial_prediction.gif")
+```
+
+### **Script 3: Structured Influence Simulation**
+
+**Summary:**
+
+-   Attempted a **more sophisticated hierarchical model**:
+
+    -   **Pixel-level probabilities** (historical frequency).
+
+    -   **Neighbor influence** (local smoothing).
+
+    -   **Block-level influence** (10×10 pixel regions to model regional trends).
+
+    -   **Inertia weighted by entropy** (pixels with uncertain histories were more likely to change).
+
+-   Simulated evolution over frames using Poisson events, neighbor pressure, block influence, and entropy-adjusted inertia.
+
+**Problems / Why it didn’t fully work:**
+
+-   Simulation was very slow due to nested loops over pixels and blocks.
+
+-   Block-level weighting and entropy-based locking sometimes over-dominated, causing unnatural stabilization of color blocks.
+
+-   Probabilistic choices with many competing influences led to no clear emerging patterns, especially for dynamic communities.
+
+-   Even with structured influences, the simulation did not capture the actual collaborative or adversarial behavior of r/place users, which is driven by human coordination rather than pure probability.
+
+**Script**: Full script on Github: [W](https://github.com/username/CS369/blob/main/Week4Script.py)[Script 3](https://github.com/sylviadu2552/CSC369/blob/master/Week5/Week5_Analysis_Hybrid.py)
+
+```{r}
+knitr::include_graphics("hybrid_prediction.gif")
+```
+
+(The gif is barely moving, but if you zoom in, you can see various pixels changing)
+
+### Attempting a Frequency-Based Analysis on r/place
+
+When I asked my professor how he might approach a more sophisticated analysis of the r/place dataset, he suggested using a Fourier transform and exploring the data in the frequency domain. I looked up how this works and tried to implement it as best I could.
+
+The idea was to take all the pixels before the whiteout, convert the R, G, and B channels into frequency space, and then simulate small phase changes to see how the canvas might evolve over time.
+
+However, this approach didn’t really work. The GIFs and the final predicted canvas mostly looked like random noise, and they didn’t really predict what would happen on the canvas. The main reasons, I think, are:
+
+-   I didn’t really know how to turn frequency changes back into real pixel changes, so the phase updates just looked random.
+
+-   The r/place data is very jumpy—pixels change suddenly—so smooth frequency stuff doesn’t really match how it actually behaves.
+
+-   I didn’t account for how colors or areas interact, so the simulation couldn’t capture the community “territories” at all.
+
+    Even though it didn’t work, this was still a useful experiment. I learned a lot about Fourier transforms, frequency-based image analysis, and how tricky it is to model something that humans control.
+
+    **Script**: Full script on Github: [W](https://github.com/username/CS369/blob/main/Week4Script.py)[Fourier Script](https://github.com/sylviadu2552/CSC369/blob/master/Week5/Week5_Fourier.py)
+
+    ```{r}
+    knitr::include_graphics("frequency.gif")
+    ```
+
+    ```{r}
+    knitr::include_graphics("spatial.gif")
+    ```
+
+### Reflection
+
+The main goal for me was to perform a more sophisticated analysis of the r/place dataset and see if I could reveal patterns in how the canvas evolved. Ideally, the simulations and frequency-based analysis would have helped answer questions like:
+
+-   How do different communities interact on the canvas? Could we detect emerging “territories” or clusters of colors controlled by coordinated users?
+
+-   Which regions are more stable or dynamic? By looking at pixel-level probabilities, stability metrics, or entropy, we could identify which areas changed frequently versus which were more persistent.
+
+-   Are there underlying patterns in pixel evolution? Using Fourier transforms, I wanted to see whether certain spatial or frequency structures emerge over time, potentially highlighting repeated behaviors or coordinated edits.
+
+    If successful, this type of analysis would have provided insight into collaborative and adversarial dynamics, showing not just where pixels changed, but *why* some regions were contested and others were stable. Even though the models didn’t fully capture these behaviors, they illustrate approaches to quantify and visualize complex interactions in a large-scale, human-driven system like r/place.
+
+Through this process though, I learned a lot about pixel modeling, neighborhood and regional influences, stability metrics, and frequency-domain analysis, and how these techniques can be applied to detect patterns in collaborative online spaces.
