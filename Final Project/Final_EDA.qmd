@@ -12,7 +12,7 @@ The dataset, sourced from **Hugging Face** by the user *SII-WANGZI* is a user-le
 
 -   `timestamp`, `datetime`, `block_number`, `transaction_hash`, `event_id`, `market_id`, `condition_id`, `user`, `role`, `price`, `token_amount`, `usd_amount`
 
-**Script**: Full script on Github: [W](https://github.com/username/CS369/blob/main/Week4Script.py)[Script 1](https://github.com/sylviadu2552/CSC369/blob/master/Week5/Week5_Analysis_Pixel.py)
+**Script**: Full script on Github: [Script](https://github.com/sylviadu2552/CSC369/blob/final-project/Final%20Project/final_EDA.py)
 
 ### **Data Cleaning**
 
