@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # --------------------------
 # Load the dataset
 # --------------------------
-df_users = dd.read_parquet('users.parquet')
+df_users = dd.read_parquet('users_filtered.parquet')
 
 print("Columns in dataset:", df_users.columns)
 print("Number of rows (lazy evaluation):", len(df_users))
@@ -29,6 +29,32 @@ print(f"\nPrice range: {min_price:.2f} to {max_price:.2f}")
 min_tokens = df_users['token_amount'].min().compute()
 max_tokens = df_users['token_amount'].max().compute()
 print(f"Token amount range: {min_tokens} to {max_tokens}")
+
+# Compute net tokens per user (full dataset)
+user_net_tokens = df_users.groupby('user')['token_amount'].sum().compute()
+print(user_net_tokens.describe())
+
+# Optional: histogram for all users (log-scaled for skew)
+plt.figure(figsize=(8,5))
+user_net_tokens.clip(-1000,1000).hist(bins=50)
+plt.yscale('log')
+plt.xlabel('Net YES tokens (clipped)')
+plt.ylabel('Count (log scale)')
+plt.title('Distribution of User Net Tokens')
+plt.show()
+
+# Log-scaled histogram to highlight fat tails
+import numpy as np
+import matplotlib.pyplot as plt
+
+user_net_tokens = df_users.groupby('user')['token_amount'].sum().compute()
+
+plt.figure(figsize=(8,5))
+plt.hist(user_net_tokens.clip(-1000,1000), bins=50, log=True)
+plt.xlabel('Net YES tokens (clipped at ±1000)')
+plt.ylabel('Count (log scale)')
+plt.title('Distribution of User Net Tokens (log-scaled)')
+plt.show()
 
 # Distribution of roles
 role_distribution = df_users['role'].value_counts().compute()
