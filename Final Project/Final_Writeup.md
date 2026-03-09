@@ -2,12 +2,14 @@
 
 ## Introduction
 
-This study investigates patterns of user trading behavior across Polymarket, a global cryptocurrency-based prediction market, during the year 2024. The goal is to determine whether active users exhibit distinguishable trading patterns and how market activity influences trade size and frequency.
+This study analyzes user trading behavior on Polymarket, a cryptocurrency-based prediction market where participants buy and sell “yes/no” tokens on the outcomes of future events. Every token is priced between $0 and $1, representing the market’s estimated probability of that outcome. For example, if YES shares for a market trade at $0.65, the market assigns roughly a 65% chance of the event occurring. A user might buy 50 YES tokens at $0.65 each on a given market and if the event occurs, each token pays $1, otherwise the tokens are worthless. Users can act as makers, setting prices and providing liquidity, or as takers, accepting existing prices.
 
-The central hypothesis is that a small fraction of highly active users drives most of the trading volume, and that trading style and risk-taking behavior strongly influence profitability. Specifically, we examine whether users who frequently act as “makers” and avoid very low-probability trades earn higher profits, and whether clusters of users exhibit distinct behavioral patterns.
+The dataset covers all trades made during 2024. The primary goal of this project is to understand how trading style, activity level, and risk-taking behavior influence profitability and overall market outcomes.
+
+I hypothesize that a small fraction of highly active users drives most of the trading volume, and that users who frequently act as market makers while avoiding extremely low-probability trades earn higher profits. This project also investigates whether distinct clusters of users exhibit consistent behavioral patterns.
 
 
-## Data Filtering and Preparation
+## Data & Methodology
 
 To ensure meaningful analysis, the raw dataset of user trades was carefully filtered to remove noise and focus on relevant activity:
 
@@ -30,90 +32,161 @@ To ensure meaningful analysis, the raw dataset of user trades was carefully filt
    - `profit_proxy_std`: standard deviation of the profit proxy (`token_amount * price`) as a measure of trading volatility.  
    - `7-day rolling net USD`: capturing short-term temporal patterns in profit accumulation.
 
-The resulting filtered dataset provides a cleaner, more representative view of trading behavior across both users and markets.
-
-## EDA
-EDA shows highly skewed distributions, reinforcing the hypothesis that a small number of users dominate activity:
-
-**Figure 1: Price Distribution (1% Sample)**  
-   ![Figure 1: Histogram of YES token probabilities](https://i.imgur.com/Jkn4QGt.png)
-- The distribution of trade prices is extremely right-skewed, with almost all trades clustering near 0.  
-- This indicates that the vast majority of trades are at very low probabilities, suggesting **most users are trading low-risk, low-price tokens**, while a small fraction of trades occur at higher probabilities (the fat tail).  
-- This skew supports the idea that **market activity is concentrated among a few higher-probability trades**, reinforcing the hypothesis that a **small fraction of trades/users dominate impactful activity**.
-
-**Figure 2: Trades per User (1% Sample, clipped at 200)** 
-![Figure 2: Histogram of trades per user](image.png)
-- The distribution of trades per user is right-skewed, with the majority of users performing relatively few trades.  
-- The histogram shows a long tail of highly active users; the extreme tail is clipped at 200 trades for clarity, but the actual data contains users with significantly more trades.  
-- This skew supports the hypothesis that **a small fraction of highly active users drive most of the trading volume**.
-
-**Figure 3: Net Token Positions per User (full dataset, clipped at positive and negative 10,000)**  
-![Figure 3: Distribution of user net tokens](https://i.imgur.com/oUCQn4y.png)  
-- The distribution is approximately normal around zero, meaning most users hold near-neutral positions.  
-- However, the **tails rise sharply**, creating fat tails that extend far in both positive and negative directions. These represent the few users with extremely large net positions, far beyond the typical range.  
-- Median net tokens is near zero, but the extremes are orders of magnitude larger, confirming that **a small fraction of users dominates net positions**, which likely drives most market impact.  
-- Even after filtering micro-trades, the fat tails persist, emphasizing the presence of **super-active, high-impact users**.
+The resulting filtered dataset provides a cleaner, more representative view of trading behavior across both users and markets. Because the dataset contains trade-level information but not full market settlement outcomes, a proxy for profitability was used. Net USD reflects the cumulative cash flow from executed trades. While this does not represent final realized profit after market resolution, it provides a consistent measure of trading performance and capital flow across users.
 
 ## Analytical Approach
 
 1. **Descriptive Metrics**  
-   - Summary statistics for all users were computed: total net USD, maker ratio, total trades, low-probability trade fraction, and profit volatility.  
-   - Histograms and scatterplots revealed highly skewed distributions, with a small number of users dominating total profits.  
+   The distributions of key trading metrics are highly skewed, supporting the hypothesis that a small fraction of users drive most market activity. Summary statistics for all users were computed, including total net USD, maker ratio, total trades, low-probability trade fraction, and profit volatility.
+
+   Due to the large size of the dataset, visualizations were generated from a 1% random sample to maintain memory efficiency while still capturing overall patterns.
+
+   **Figure 1: User Trading Activity (1% Sample, Three Histograms Combined)**  
+   ![Figure 1: Combined histograms of price distribution, trades per user, and net token positions](https://i.imgur.com/1yb8HI6.png) 
+
+   - **Price Distribution:** Most trades occur at very low probabilities (near $0), with a small fraction at higher prices. This indicates that impactful trades are concentrated among a few higher-probability positions.  
+   - **Trades per User:** The majority of users make relatively few trades, while a small subset of highly active users dominates overall trading volume.  
+   - **Net Token Positions:** Most users hold near-neutral positions, but extreme positions exist in both directions, reflecting the presence of super-active, high-impact traders.    
 
 2. **Clustering**  
-   - Users were clustered using **KMeans** based on `maker_ratio`, `low_prob_fraction`, and total trades.  
-   - Four distinct clusters emerged:
-      - Cluster 0: low maker ratio, high risk-taking, many low-profit users.  
-      - Cluster 1: moderate activity and moderate profitability.  
-      - Cluster 2: highly active, high maker ratio, highly profitable.  
-      - Cluster 3: small cluster of niche users with extreme low-probability trades.  
-   - **ANOVA** confirmed that `net_usd` differed significantly across clusters with a F-statistic of 11334, and a p-value of 0, supporting the idea that user type drives profitability.
+Users were grouped using KMeans clustering based on three key behavioral metrics: `maker_ratio`, `low_prob_fraction`, and total trades. The variables were standardized prior to clustering to ensure differences in scale did not dominate the algorithm. The optimal number of clusters was evaluated using the elbow method, which examines the within-cluster sum of squares as the number of clusters increases. The elbow occurred at k = 4, indicating that four clusters provided a good balance between model complexity and explanatory power. This analysis revealed four distinct clusters, summarized in Table 1:
 
-   **Figure 5: Net USD vs Maker Ratio by Cluster**  
-   ![Figure 5: Scatterplot colored by cluster](https://i.imgur.com/DNix76O.png)  
-   - Shows distinct behavioral patterns among clusters.
-
-3. **Statistical Relationships**  
-Spearman correlation analysis was used to examine the relationship between trading behavior and profitability by comparing each user’s `maker_ratio` with their total net profit (`net_usd`). The results showed a moderate positive association (ρ = 0.47, p ≈ 0), indicating that users who more frequently acted as market makers tended to achieve higher profits. Because Spearman correlation does not assume normally distributed data, this relationship reflects a consistent behavioral trend rather than being driven solely by extreme outliers. This suggests that profitable users are not simply more active, but instead employ different strategies, such as providing liquidity or placing trades more strategically. These findings support the project’s hypothesis that distinguishable behavioral patterns exist among traders and that a subset of strategic users contributes disproportionately to successful market outcomes.
-
-   **Maker Ratio vs Net USD**  
-
-   Figure 5 from earlier shows net USD versus maker ratio colored by cluster. While KMeans clustering identifies statistically distinct groups, the scatterplot reveals substantial overlap among most users. Most participants have low net USD, and only a small fraction of high-impact users stand out. As a result, clear visual trends are not apparent, reflecting the highly skewed nature of the data. This demonstrates that while clusters are meaningful statistically, they are not easily distinguishable in raw scatterplots for the majority of users.
-
-   **Figure 6: Net USD vs Low Probability Fraction**  
-   ![Figure 6: Scatterplot showing negative association](https://i.imgur.com/UJxGtQE.png)
-
-   Similarly, a Welch t-test comparing users with high versus low low_prob_fraction confirms that users trading more low-probability positions tend to earn less (t = −7.94, p ≈ 0), but again, the scatterplot in Figure 7 shows little visible pattern due to the concentration of low-impact users. Overall, the scatterplots are noisy and flat for most users, yet the statistical tests reveal meaningful differences, primarily driven by the small subset of high-impact traders.
+      | Cluster |   Users | Avg Net USD | Median Net USD | Avg Maker Ratio | Avg Low Prob | Avg Trades |
+      | ------- | ------: | ----------: | -------------: | --------------: | -----------: | ---------: |
+      | 0       | 129,457 |       9,238 |            201 |           0.129 |        0.944 |        101 |
+      | 1       | 111,476 |       9,683 |          2,234 |           0.039 |        0.077 |         68 |
+      | 2       |  44,974 |      86,325 |          7,341 |           0.696 |        0.279 |        418 |
+      | 3       |      22 |  18,751,660 |      4,377,093 |           0.823 |        0.730 |    382,846 |
 
 
-4. **Regression Modeling**  
-A robust linear regression (RLM with HuberT loss) was used to examine the effect of trading behavior on log-transformed net USD. Predictors included maker ratio, low-probability trade fraction, an interaction term, and cluster indicators. The model confirms that higher maker participation is generally associated with higher profitability, while frequent low-probability trading is negatively associated with profits. 
+   **Table 1:** Summary statistics by cluster.
 
-   **Figure 7: Predicted vs Actual Net USD**  
-   ![Figure 7: Scatterplot of predicted vs actual net USD](https://i.imgur.com/JOmg9W6.png)
+   An **ANOVA** indicates that `net_usd` differs significantly across clusters (F = 11,334, p < 0.001), suggesting that user behavior strongly drives profitability.  However, due to the heavy-tailed distribution, the results should be interpreted with caution. 
 
-   The predicted-versus-actual plot reveals an important characteristic of the data rather than strong predictive accuracy. Most observations form a dense horizontal band near lower profit values, indicating that the model predicts similar outcomes for the majority of users. At the same time, a smaller group of extreme high-profit users forms a second horizontal concentration at much larger values. These outliers create an apparent upward regression trend despite the overall flat structure of the data.
+   **Figure 2: User Profitability and Maker Activity by Cluster**  
+   ![Figure 2: Net USD and Maker Ratio by Cluster](https://i.imgur.com/BnmOBWT.png)  
 
-   This pattern reflects the highly unequal distribution of trading outcomes observed throughout the analysis. Profitability is dominated by a small number of exceptional users whose behavior differs substantially from the majority of participants. As a result, while the regression identifies statistically significant relationships between behavioral variables and profit, it struggles to accurately predict individual outcomes across the full range of users. Rather than indicating model failure, this highlights an important substantive conclusion: market profits are heavily concentrated and driven by rare, high-performing traders, making precise prediction difficult even when behavioral patterns are statistically meaningful.
+   This figure shows **two aspects of user behavior across clusters**:  
 
-   In the context of the project hypothesis, this result reinforces the idea that trading success is not uniformly predictable across users. Instead, the market appears to contain a large population of similar low-impact traders alongside a small group of influential participants whose extreme outcomes shape overall market dynamics.
+   - Left plot: Log-transformed net USD per user, highlighting differences in profitability.  
+   - Right plot: Maker ratio per user, showing differences in liquidity provision activity.  
 
-## Key Insights
-1. **Profit Concentration:** Trading outcomes are highly unequal, with a small fraction of users accounting for a disproportionate share of total net USD.
-2. **Maker Behavior Matters:** Higher maker participation is consistently associated with increased profitability, suggesting that liquidity-providing strategies confer structural advantages.
-3. **Risk Exposure Reduces Returns:** Frequent engagement in low-probability trades is negatively associated with profits, indicating that speculative behavior tends to underperform.
-4. **Behavioral Segmentation:** Unsupervised clustering reveals distinct groups of users with different trading styles and outcome distributions, supporting the idea that market participants are not behaviorally homogeneous.
-5. **Limited Predictability of Outcomes:** Statistical analyses capture meaningful patterns, yet scatterplots show limited visual evidence because of extreme skew and the dominance of low-impact users.
+   Clusters 0 and 1 contain the majority of users with lower profitability and lower maker ratios. Cluster 2 includes more active and profitable users with higher maker ratios. Cluster 3 is a very small group with extreme net USD and high maker ratios, with potential to be institutional-level traders or even automated strategies. Together, these plots illustrate that user behavior and profitability are highly unevenly distributed across clusters.
+
+
+3. **Profit vs. Maker Participation**
+User behavior in trading can significantly influence profitability. One key behavioral metric is the **maker ratio**, which represents the fraction of trades a user executes as a market maker rather than a taker. Market makers often provide liquidity and may benefit from transaction fees or price advantages, which can translate into higher net earnings.  
+
+   To visualize the relationship between trading behavior and profitability, a **hexbin of `maker_ratio` versus log-transformed net USD (`log1p(net_usd)`)** was plotted:
+
+   **Figure 3: Profit vs Maker Participation**  
+   ![Figure 3: Density Plot of Profit vs Maker Participation](https://i.imgur.com/sYaPyoM.png)
+
+   The plot reveals several important patterns:
+      - **Concentration at low maker ratios:** The densest hexagons appear at the left side of the plot (low `maker_ratio`), indicating that most users execute relatively few maker trades. These users generally correspond to lower `log(net_usd)` values, confirming that the majority achieve modest profits.
+      - **Positive correlation between maker activity and profits:** As `maker_ratio` increases (moving right along the x-axis), the hexagons shift slightly upward, showing that users with higher fractions of maker trades tend to have higher `log(net_usd)` values. This trend suggests that active market makers are more profitable.
+      - **High-profit outliers:** There are isolated hexagons at the upper-right region of the plot, representing a small number of users who combine high maker ratios with extremely large profits. These outliers reinforce the heavy-tailed nature of profitability observed in the overall distribution.
+
+   These visual patterns support our hypothesis that **trading behavior influences profitability**. Users who engage more as market makers tend to earn more, highlighting that strategy choices, not just trading volume, affect success.  
+
+
+4. **Statistical Relationships**  
+Several statistical analyses were conducted to evaluate the relationships between trading behavior and profitability, focusing on cluster membership, maker activity, and risk engagement.
+
+   #### Spearman Correlation: Maker Ratio and Profitability
+   Spearman’s rank correlation was calculated to evaluate the monotonic relationship between `maker_ratio` and `net_usd`.  
+
+   - **Results:** ρ = 0.472, p < 0.001  
+   - **Interpretation:** A moderately strong positive correlation indicates that higher maker activity is associated with higher profits. This pattern is consistent with **Figure 3: Density of Profit vs Maker Participation**, suggesting that strategy choices, such as acting as a market maker more frequently, are linked to improved financial performance.
+
+   #### Welch’s t-test: High vs. Low Risk Engagement
+   Users were divided based on the median `low_prob_fraction` (fraction of extremely low-probability trades), and a Welch t-test was used to compare mean profits between high- and low-risk engagement groups.  
+
+   - **Results:** t = -7.94, p < 0.001  
+   - **Interpretation:** Users with higher engagement in low-probability trades exhibit significantly lower profits compared to those with lower engagement. This supports the notion that excessive involvement in risky trades negatively impacts profitability. 
+
+   #### Summary
+   The analyses supports our hypothesis that trading behavior is a significant determinant of profitability:
+   - As seen earlier, cluster membership captures behavioral patterns that correspond to differences in earnings.  
+   - Maker activity is positively associated with profits.  
+   - Controlled risk-taking, avoiding excessive low-probability trades, contributes to stronger financial performance.  
+
+
+5. **Regression Modeling**  
+   To quantify the combined effects of trading behavior and risk engagement on profitability, a robust linear model (RLM) with Huber weighting was fit to the log-transformed `net_usd`. The predictors included:
+
+      - **Maker activity (`maker_ratio`)**  
+      - **Risk engagement (`low_prob_fraction`)**  
+      - **Cluster membership (`cluster_1`, `cluster_2`, `cluster_3`, with cluster 0 as reference)**  
+      - **Interaction term (`maker_ratio * low_prob_fraction`)**  
+
+   The robust regression approach was chosen to account for the heavy-tailed and skewed nature of the profit distribution, which includes extreme outliers.
+
+   #### Key Findings
+   | Predictor | Coefficient | Interpretation |
+   |-----------|------------|----------------|
+   | **Const** | 7.7558 | Baseline log-profit for users in cluster 0 with zero maker activity and zero low-probability trade fraction. |
+   | **maker_ratio** | 3.0515 | Positive and highly significant: higher maker activity is strongly associated with increased profitability. This supports the pattern observed in **Figure 3**, where users with higher maker ratios cluster at higher log-profits. |
+   | **low_prob_fraction** | -3.6870 | Negative and highly significant: engaging in low-probability trades reduces expected profits. This aligns with the Welch t-test results showing lower profits among high-risk users. |
+   | **cluster_1** | 0.4675 | Users in cluster 1 earn slightly higher profits relative to cluster 0, controlling for behavior metrics. |
+   | **cluster_2** | -0.8152 | After controlling for maker activity and risk engagement, users in cluster 2 earn lower profits relative to cluster 0. Although cluster 2 shows higher median profits in the raw summary statistics (Table 1), this difference diminishes once trading behavior is accounted for, suggesting that maker activity and risk-taking explain much of the variation between these groups. |
+   | **cluster_3** | 5.1147 | Extremely high profits dominate cluster 3, confirming the presence of outliers with disproportionately large earnings. |
+   | **maker_lowprob_interaction** | 3.4662 | Significant positive interaction: users who combine high maker activity with higher low-probability trade fractions see an amplified effect on profitability, suggesting that the combined influence of behavior and risk-taking is more nuanced than individual effects alone. |
+
+   #### Interpretation
+   The robust regression confirms and extends the patterns observed in earlier analyses:
+
+   1. **Behavior drives profitability:** Maker activity has a strong positive influence on earnings, reinforcing the hypothesis that strategy choice affects success.  
+   2. **Risk management is crucial:** Engagement in low-probability trades negatively impacts profitability, indicating that indiscriminate risk-taking is detrimental.  
+   3. **Cluster effects highlight heterogeneity:** Cluster 3 contains extreme outliers with massive profits, while clusters 1 and 2 represent more typical traders with moderate earnings. Although cluster 2 shows relatively strong profits in the raw summary statistics (Table 1), the regression results indicate that much of this difference is explained by trading behavior such as maker activity and risk engagement. This suggests that behavioral strategy accounts for much of the variation between clusters.  
+   4. **Interactions matter:** The significant interaction term suggests that the effect of maker activity on profits is modified by risk-taking behavior. High-maker users who strategically engage in low-probability trades can see disproportionate gains, highlighting the complexity of trading success.
+
+
+
+6. **Profit Concentration**
+To assess the distribution of profits across users, both a Lorenz curve and a Pareto plot were examined. These tools illustrate the extent to which earnings are concentrated among a small fraction of traders.
+
+   #### Lorenz Curve
+   The Lorenz curve plots the cumulative share of users against the cumulative share of profits:
+
+   **Figure 4: Profit Concentration Among Traders**  
+   ![Figure 4: Profit Concentration Among Traders](https://i.imgur.com/g2eMbT4.png)  
+
+   The curve being far below the 45° line shows that profits are extremely concentrated among a small fraction of users. Most users generate only a small portion of total profits, while a very small group captures the majority of earnings. The calculated Gini coefficient of **0.934** indicates extremely unequal profit distribution among users. Most profits are concentrated in a very small fraction of the user base, consistent with the Lorenz curve. This also aligns with cluster-level findings, where cluster 3 contains a tiny group of users responsible for the majority of profits.
+
+   #### Pareto Plot
+   The Pareto plot highlights the concentration of profits by ranking users from highest to lowest earnings:
+
+   **Figure 5: Pareto Distribution of Trading Profits**  
+   ![Figure 5: Pareto Distribution of Trading Profit](https://i.imgur.com/841h19m.png)  
+
+   The Pareto plot confirms that the top ~1% of users are responsible for a disproportionate share of total profits. This underscores the “winner-takes-most” nature of the market and reinforces findings from the cluster analysis and robust regression results: high maker activity combined with controlled risk-taking distinguishes the most profitable traders.
+
+   Overall, the Lorenz and Pareto analyses provide clear visual and quantitative evidence of profit inequality, supporting the conclusion that user behavior and strategic choices play a pivotal role in profitability.
+
+
 
 ## Conclusion
 
-Overall, the analysis shows that trading outcomes in 2024 were highly uneven. Most users had low net USD, while a small group of high-impact users drove the majority of profits. Scatterplots of net USD versus maker ratio or low-probability trades do not show clear trends for most users because the data is dominated by low-profit participants, with only a few extreme outliers.
+The analysis of 2024 trading activity reveals that profitability on Polymarket is highly uneven across users. The majority of participants achieved modest net USD, while a very small group of high-impact traders captured the bulk of total profits. Visualizations of profit distributions and density-based plots show that the dataset is dominated by a large number of low-profit users alongside a small number of extreme outliers, which can obscure clear behavioral patterns when viewed directly.
 
-Statistical analyses still reveal meaningful patterns. Maker-oriented trading behavior is positively associated with profitability, while frequent low-probability trades tend to reduce profits. Robust regression confirms these relationships and suggests that maker activity can partially offset the negative effects of risky trades. Clustering identified behavioral groups, but visual differences between clusters are subtle for the majority of users, emphasizing that statistical separation does not always translate into obvious visual trends.
+Despite this heavy skew, statistical analyses reveal consistent and meaningful relationships between trading behavior and profitability. Maker-oriented trading behavior is positively associated with profitability, whereas frequent engagement in extremely low-probability trades tends to reduce earnings. Robust regression results further confirm these relationships and indicate that higher maker activity can partially mitigate the negative effects of risky trading. Clustering analysis also identified distinct behavioral groups of traders, although differences between clusters remain subtle for the majority of users due to the highly unequal distribution of profits.
 
-In short, a small subset of strategic traders drives most of the profits, while most participants have little impact. This supports the idea that trading success depends on behavior and strategy, not just activity level. It also highlights that scatterplots may be misleading in highly skewed datasets, so statistical tests are important for understanding real patterns in the data.
+Overall, the results support the hypothesis that a small subset of highly active and strategically oriented traders drives a disproportionate share of market profits. The findings suggest that trading success is more strongly associated with behavioral strategy—particularly liquidity provision and controlled risk-taking—than with trading activity alone.
+
+However, because this analysis is observational, several potential confounding variables may influence the results. Factors such as trader experience, capital availability, market selection, and the use of automated trading strategies may affect both trading behavior and profitability. As a result, the relationships identified in this study should be interpreted as associations rather than strictly causal effects.
 
 ## Next Steps / Extensions
-There are several directions in which this project could be extended to provide a deeper understanding of user behavior. One approach is to incorporate predictive modeling, such as Random Forests or time-series forecasting, to better estimate trading outcomes and assess the predictability of user strategies. It may also be valuable to examine individual markets to determine whether maker advantages or the effects of risky trading vary across different liquidity conditions. Additionally, tracking users over time could reveal whether strategies evolve or if participants move between behavioral clusters, providing insight into learning and adaptation in trading behavior.
 
-In future revisions, I also plan to improve the visualizations to better reflect the statistical patterns identified. The current scatterplots are dominated by low net USD users, which obscures meaningful relationships in the majority of cases. By employing techniques such as log-scaled axes, aggregated views, or highlighting high-impact users, the figures can more accurately convey the behavioral patterns detected through statistical analyses. These steps aim to make the analysis more precise, interpretable, and informative, ultimately providing a clearer picture of the factors that drive trading success in prediction markets.
+Several avenues exist for extending this project to gain deeper insights into user trading behavior:
+
+1. **Predictive Modeling**  
+   Incorporating models such as Random Forests or time-series forecasting could improve predictions of trading outcomes and provide a more rigorous assessment of the predictability of different user strategies.
+
+2. **Market-Specific Analysis**  
+   Examining individual markets may reveal whether the advantages of maker activity or the effects of risky trading vary across liquidity conditions, providing a finer-grained understanding of market dynamics.
+
+3. **Longitudinal Study of Users**  
+   Tracking users over time could uncover whether trading strategies evolve or whether participants shift between behavioral clusters, offering insights into learning, adaptation, and experience effects in trading behavior.
+
+By pursuing these next steps, the analysis can be made more precise, interpretable, and informative, ultimately providing a clearer picture of the behavioral and strategic factors that drive trading success in prediction markets.
