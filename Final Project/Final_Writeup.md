@@ -160,7 +160,7 @@ To assess the distribution of profits across users, both a Lorenz curve and a Pa
    **Figure 5: Pareto Distribution of Trading Profits**  
    ![Figure 5: Pareto Distribution of Trading Profit](https://i.imgur.com/841h19m.png)  
 
-   The Pareto plot confirms that the top ~1% of users are responsible for a disproportionate share of total profits. This underscores the “winner-takes-most” nature of the market and reinforces findings from the cluster analysis and robust regression results: high maker activity combined with controlled risk-taking distinguishes the most profitable traders.
+   The Pareto curve shows that profitability is highly concentrated among a small portion of users. Less than 10% of users account for roughly 80% of total profit, indicating that a small minority of traders generate the majority of gains. This pattern suggests a strongly unequal distribution of trading outcomes.
 
    Overall, the Lorenz and Pareto analyses provide clear visual and quantitative evidence of profit inequality, supporting the conclusion that user behavior and strategic choices play a pivotal role in profitability.
 
@@ -168,7 +168,7 @@ To assess the distribution of profits across users, both a Lorenz curve and a Pa
 
 ## Conclusion
 
-The analysis of 2024 trading activity reveals that profitability on Polymarket is highly uneven across users. The majority of participants achieved modest net USD, while a very small group of high-impact traders captured the bulk of total profits. Visualizations of profit distributions and density-based plots show that the dataset is dominated by a large number of low-profit users alongside a small number of extreme outliers, which can obscure clear behavioral patterns when viewed directly.
+The analysis of 2024 trading activity shows that profits on Polymarket are very uneven across users. Most participants made relatively small amounts of net USD, while a small group of traders captured a large share of the total profits. Plots of the profit distribution also show a heavy concentration of low-profit users with a few extreme outliers. Because of this, the extreme values can make it harder to clearly see general behavioral patterns in the raw data.
 
 Despite this heavy skew, statistical analyses reveal consistent and meaningful relationships between trading behavior and profitability. Maker-oriented trading behavior is positively associated with profitability, whereas frequent engagement in extremely low-probability trades tends to reduce earnings. Robust regression results further confirm these relationships and indicate that higher maker activity can partially mitigate the negative effects of risky trading. Clustering analysis also identified distinct behavioral groups of traders, although differences between clusters remain subtle for the majority of users due to the highly unequal distribution of profits.
 
