@@ -84,10 +84,10 @@ User behavior in trading can significantly influence profitability. One key beha
 
    The plot reveals several important patterns:
       - **Concentration at low maker ratios:** The densest hexagons appear at the left side of the plot (low `maker_ratio`), indicating that most users execute relatively few maker trades. These users generally correspond to lower `log(net_usd)` values, confirming that the majority achieve modest profits.
-      - **Positive correlation between maker activity and profits:** As `maker_ratio` increases (moving right along the x-axis), the hexagons shift slightly upward, showing that users with higher fractions of maker trades tend to have higher `log(net_usd)` values. This trend suggests that active market makers are more profitable.
-      - **High-profit outliers:** There are isolated hexagons at the upper-right region of the plot, representing a small number of users who combine high maker ratios with extremely large profits. These outliers reinforce the heavy-tailed nature of profitability observed in the overall distribution.
+      - **Wider profit dispersion at higher maker ratios:** As `maker_ratio` increases (moving right along the x-axis), the range of `log(net_usd)` expands noticeably and low profits remain common, but the upper profit boundary rises, suggesting that higher maker activity opens the door to greater gains.
+      - **High-profit outliers skew toward high maker ratios** While extreme profits occur across the spectrum, the most exceptional outliers concentrate in the upper-right region, where users combine high maker ratios with massive profits. This pattern suggests that market-making behavior is overrepresented among top earners.
 
-   These visual patterns support our hypothesis that **trading behavior influences profitability**. Users who engage more as market makers tend to earn more, highlighting that strategy choices, not just trading volume, affect success.  
+   These visual patterns support our hypothesis that trading behavior influences profitability. Users who engage more as market makers have a clearer path to higher profits, highlighting that strategy choices, not just trading volume, affect success.
 
 
 4. **Statistical Relationships**  
