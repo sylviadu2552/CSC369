@@ -174,7 +174,7 @@ Despite this heavy skew, statistical analyses reveal consistent and meaningful r
 
 Overall, the results support the hypothesis that a small subset of highly active and strategically oriented traders drives a disproportionate share of market profits. The findings suggest that trading success is more strongly associated with behavioral strategy—particularly liquidity provision and controlled risk-taking—than with trading activity alone.
 
-However, because this analysis is observational, several potential confounding variables may influence the results. Factors such as trader experience, capital availability, market selection, and the use of automated trading strategies may affect both trading behavior and profitability. As a result, the relationships identified in this study should be interpreted as associations rather than strictly causal effects.
+However, because this analysis is observational, several potential confounding variables may influence the results. Factors such as trader experience, capital availability, market selection, and the use of automated trading strategies may affect both trading behavior and profitability. As a result, the relationships identified in this study should be interpreted as associations rather than strictly causal effects. Results may also not generalize to other markets or time periods. 
 
 ## Next Steps / Extensions
 
